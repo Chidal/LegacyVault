@@ -1,53 +1,27 @@
-# Legacy Vault
+# 💼 LegacyVault
 
-Legacy Vault is a CELO MiniPay-based personal finance application designed to manage your token holdings and facilitate seamless asset transfers.
+**Future-Proof Your Digital Wealth**  
+A frictionless personal finance dApp built on [NERO Chain](https://nerochain.io) – enabling secure token management, seamless transfers, and innovative digital legacy planning.
 
-## Features
+---
 
-- **Token Management**: Easily manage your token holdings and track their values within the app.
-- **Legacy Planning**: Safeguard your digital assets and ensure their transfer to designated beneficiaries in the event of your passing.
-- **MultiSend**: Send tokens to multiple recipients in a single transaction, streamlining the process and enhancing efficiency.
-- **Token Swap**: Swap tokens held in your wallet for other tokens listed on Uniswap, all within the Legacy Vault app.
+## 🚀 Overview
 
-## Getting Started
+**LegacyVault** is a next-gen DeFi application designed to simplify personal finance in the Web3 world. Built for mass adoption, LegacyVault leverages NERO Chain’s cutting-edge infrastructure and the Paymaster (AA-platform) to deliver a gasless, intuitive experience that feels like traditional fintech.
 
-1. Clone the repository:
+### 🔑 Key Features
 
-   ```bash
-   git clone https://github.com/your-username/legacy-vault.git
-   ```
+- **Token Management**  
+  View and manage all your token holdings across supported networks with real-time valuation.
 
-2. Install dependencies:
+- **Legacy Planning**  
+  Assign digital heirs to inherit your assets in the event of wallet inactivity, enforced through smart contracts.
 
-   ```bash
-   cd legacy-vault
-   npm install
-   ```
+- **MultiSend**  
+  Send tokens to multiple recipients in a single transaction—ideal for payrolls, airdrops, and distributions.
 
-3. Start the development server:
+- **In-App Token Swap**  
+  Seamlessly swap tokens using Uniswap integration, all within the LegacyVault interface.
 
-   ```bash
-   npm run dev
-   ```
-
-4. Open [http://localhost:3000](http://localhost:3000) in your browser to view the app.
-
-## Technologies Used
-
-- **Next.js**: React framework for building server-rendered applications.
-- **Tailwind CSS**: Utility-first CSS framework for styling.
-- **Wagmi**: Library for connecting to wallet addresses.
-- **Uniswap Widgets**: Widgets for integrating Uniswap functionality into the app.
-- **CELO MiniPay**: Infrastructure for integrating CELO-based payments and token functionality.
-
-## Contributing
-
-Contributions are welcome! Please follow the [contributing guidelines](CONTRIBUTING.md) to get started.
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
-
-## Acknowledgements
-
-- Thanks to the developers of Wagmi, Uniswap Widgets, and CELO MiniPay for their valuable contributions to this project.
+- **Gasless UX**  
+  Powered by NERO’s Paymaster, users can transact without worrying about gas fees.
