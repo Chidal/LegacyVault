@@ -20,8 +20,6 @@
 ---
 
 ## 🛠️ Technical Architecture  
-![System Architecture Diagram](https://i.imgur.com/pW3TFQv.png)  
-*Fig 2. LegacyVault's AA-powered architecture on NERO Chain*
 
 **Key Components**:
 - **NERO AA Layer**: Paymaster integration + UserOpSDK  
@@ -75,14 +73,6 @@ gantt
 - 500+ testnet AA wallets in Month 1  
 - 50+ legacy plans created  
 
----
-
-## 🖼️ UI Preview
-![Legacy Planning Flow](https://i.imgur.com/8vGZQqH.gif)  
-*Fig 3. Gasless legacy plan creation with NERO Paymaster*
-
----
-
 ## 🛠️ Tech Stack Upgrade
 
 **NERO-Specific Additions**:
@@ -110,7 +100,7 @@ gantt
 ## 🏆 Hackathon Deliverables
 
 1. **Code Repo**  
-   [github.com/your-repo](https://github.com) (include AA branch)  
+   [https://github.com/Chidal/LegacyVault.git](https://github.com/Chidal/LegacyVault.git)
 
 2. **Live Demo**  
    [demo.legacyvault.io](https://demo.legacyvault.io)  
@@ -127,44 +117,8 @@ gantt
 2. Integrate NERO token-as-gas UI  
 3. Optimize for Blockspace 2.0  
 
-**Team**: @yourname @teammates  
-
---- 
-
 This version:  
 ✅ Clearly shows NERO Chain integration points  
 ✅ Provides measurable success metrics  
 ✅ Includes visual documentation  
 ✅ Aligns with Wave 2 judging criteria  
-
-Would you like me to add any specific technical deep dives or additional NERO-focused case studies?
-
-
-
-# 💼 LegacyVault
-
-**Future-Proof Your Digital Wealth**  
-A frictionless personal finance dApp built on [NERO Chain](https://nerochain.io) – enabling secure token management, seamless transfers, and innovative digital legacy planning.
-
----
-
-## 🚀 Overview
-
-**LegacyVault** is a next-gen DeFi application designed to simplify personal finance in the Web3 world. Built for mass adoption, LegacyVault leverages NERO Chain’s cutting-edge infrastructure and the Paymaster (AA-platform) to deliver a gasless, intuitive experience that feels like traditional fintech.
-
-### 🔑 Key Features
-
-- **Token Management**  
-  View and manage all your token holdings across supported networks with real-time valuation.
-
-- **Legacy Planning**  
-  Assign digital heirs to inherit your assets in the event of wallet inactivity, enforced through smart contracts.
-
-- **MultiSend**  
-  Send tokens to multiple recipients in a single transaction—ideal for payrolls, airdrops, and distributions.
-
-- **In-App Token Swap**  
-  Seamlessly swap tokens using Uniswap integration, all within the LegacyVault interface.
-
-- **Gasless UX**  
-  Powered by NERO’s Paymaster, users can transact without worrying about gas fees.
