@@ -9,7 +9,11 @@
         "lint": "next lint"
     },
     "dependencies": {
-        "@celo/contractkit": "^8.0.0",
+        "@nerochain/aa-sdk": "^0.5.1",
+        "@nerochain/blockspace-utils": "^1.0.0",
+        "@nerochain/paymaster-sdk": "^1.2.0",
+        "@nerochain/sdk": "^0.8.2",
+        "@nerochain/wagmi-connector": "^1.0.3",
         "@headlessui/react": "^1.7.14",
         "@heroicons/react": "^2.0.18",
         "@rainbow-me/rainbowkit": "^2.2.4",
