@@ -6,8 +6,7 @@ async function main() {
   const unlockTime = currentTimestamp + 60; // 60 seconds from now
   
   const lockedAmount = hre.ethers.utils.parseUnits("0.0001", 18); 
-  const feeToken = "0xNEROTokenAddress"; // Replace with NERO's token address
-
+  const feeToken = "0x43E55608892989c43366CCd07753ce49e0c17688"; 
   console.log(`Deploying Lock with AA support...`);
 
   // AA-enabled deployment
@@ -16,7 +15,7 @@ async function main() {
     {
       args: [unlockTime],
       paymasterConfig: {
-        sponsorshipPolicy: "TIME_LOCK", // Custom policy from Paymaster dashboard
+        sponsorshipPolicy: "TIME_LOCK", 
         feeToken: feeToken
       },
       value: lockedAmount

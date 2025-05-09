@@ -8,7 +8,7 @@ module.exports = {
   BATCH_TRANSFER: {
     rules: {
       maxOperations: 100,
-      feeToken: "0xNEROTokenAddress"
+      feeToken: "0x43E55608892989c43366CCd07753ce49e0c17688"
     }
   }
 };

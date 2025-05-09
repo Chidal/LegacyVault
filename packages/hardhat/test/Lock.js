@@ -21,7 +21,7 @@ describe("Lock (AA-enabled)", function () {
       value: ONE_NERO,
       aaOptions: {
         paymaster: true,
-        feeToken: "0xNEROTokenAddress" // Replace with actual NERO token address
+        feeToken: "0x43E55608892989c43366CCd07753ce49e0c17688" // Replace with actual NERO token address
       }
     });
 

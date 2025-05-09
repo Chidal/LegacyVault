@@ -27,7 +27,7 @@ const config: HardhatUserConfig = {
     },
     nero_mainnet: {
       url: process.env.NERO_MAINNET_PROVIDER_URL,
-      chainId: 12345, // Update with actual mainnet ID
+      chainId: 1689, 
       accounts: [process.env.PRIVATE_KEY!],
       aaOptions: {
         paymasterUrl: "https://paymaster.nerochain.io",
@@ -48,7 +48,7 @@ const config: HardhatUserConfig = {
       },
       {
         network: "nero_mainnet",
-        chainId: 12345, // Update with actual mainnet ID
+        chainId: 1689, 
         urls: {
           apiURL: "https://api.neroscan.io/api",
           browserURL: "https://neroscan.io",
