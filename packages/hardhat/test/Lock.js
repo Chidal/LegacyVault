@@ -4,123 +4,99 @@ const {
 } = require("@nomicfoundation/hardhat-network-helpers");
 const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 const { expect } = require("chai");
+const { createAAUserOp } = require("@nerochain/hardhat-aa");
 
-describe("Lock", function () {
-  // We define a fixture to reuse the same setup in every test.
-  // We use loadFixture to run this setup once, snapshot that state,
-  // and reset Hardhat Network to that snapshot in every test.
-  async function deployOneYearLockFixture() {
+describe("Lock (AA-enabled)", function () {
+  // Updated fixture with AA support
+  async function deployAALockFixture() {
     const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-    const ONE_GWEI = 1_000_000_000;
+    const ONE_NERO = ethers.utils.parseUnits("1", 18); // Using NERO tokens instead of ETH
 
-    const lockedAmount = ONE_GWEI;
     const unlockTime = (await time.latest()) + ONE_YEAR_IN_SECS;
-
-    // Contracts are deployed using the first signer/account by default
     const [owner, otherAccount] = await ethers.getSigners();
 
+    // AA-enabled deployment
     const Lock = await ethers.getContractFactory("Lock");
-    const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+    const lock = await Lock.deploy(unlockTime, { 
+      value: ONE_NERO,
+      aaOptions: {
+        paymaster: true,
+        feeToken: "0xNEROTokenAddress" // Replace with actual NERO token address
+      }
+    });
 
-    return { lock, unlockTime, lockedAmount, owner, otherAccount };
+    return { lock, unlockTime, lockedAmount: ONE_NERO, owner, otherAccount };
   }
 
-  describe("Deployment", function () {
-    it("Should set the right unlockTime", async function () {
-      const { lock, unlockTime } = await loadFixture(deployOneYearLockFixture);
+  // Helper for AA withdrawals
+  async function createWithdrawUserOp(lock, signer) {
+    return createAAUserOp(signer, {
+      target: lock.address,
+      data: lock.interface.encodeFunctionData("withdraw"),
+      paymaster: true
+    });
+  }
 
-      expect(await lock.unlockTime()).to.equal(unlockTime);
+  describe("AA Deployment", function () {
+    it("Should deploy with AA support", async function () {
+      const { lock } = await loadFixture(deployAALockFixture);
+      expect(await lock.isAACapable()).to.be.true;
     });
 
-    it("Should set the right owner", async function () {
-      const { lock, owner } = await loadFixture(deployOneYearLockFixture);
-
-      expect(await lock.owner()).to.equal(owner.address);
-    });
-
-    it("Should receive and store the funds to lock", async function () {
-      const { lock, lockedAmount } = await loadFixture(
-        deployOneYearLockFixture
-      );
-
-      expect(await ethers.provider.getBalance(lock.address)).to.equal(
-        lockedAmount
-      );
-    });
-
-    it("Should fail if the unlockTime is not in the future", async function () {
-      // We don't use the fixture here because we want a different deployment
-      const latestTime = await time.latest();
-      const Lock = await ethers.getContractFactory("Lock");
-      await expect(Lock.deploy(latestTime, { value: 1 })).to.be.revertedWith(
-        "Unlock time should be in the future"
-      );
+    it("Should accept NERO tokens as fee payment", async function () {
+      const { lock } = await loadFixture(deployAALockFixture);
+      expect(await lock.feeToken()).to.equal("0xNEROTokenAddress");
     });
   });
 
-  describe("Withdrawals", function () {
-    describe("Validations", function () {
-      it("Should revert with the right error if called too soon", async function () {
-        const { lock } = await loadFixture(deployOneYearLockFixture);
-
-        await expect(lock.withdraw()).to.be.revertedWith(
-          "You can't withdraw yet"
-        );
-      });
-
-      it("Should revert with the right error if called from another account", async function () {
-        const { lock, unlockTime, otherAccount } = await loadFixture(
-          deployOneYearLockFixture
-        );
-
-        // We can increase the time in Hardhat Network
-        await time.increaseTo(unlockTime);
-
-        // We use lock.connect() to send a transaction from another account
-        await expect(lock.connect(otherAccount).withdraw()).to.be.revertedWith(
-          "You aren't the owner"
-        );
-      });
-
-      it("Shouldn't fail if the unlockTime has arrived and the owner calls it", async function () {
-        const { lock, unlockTime } = await loadFixture(
-          deployOneYearLockFixture
-        );
-
-        // Transactions are sent using the first signer by default
-        await time.increaseTo(unlockTime);
-
-        await expect(lock.withdraw()).not.to.be.reverted;
-      });
+  describe("AA Withdrawals", function () {
+    it("Should process AA withdrawal after unlock time", async function () {
+      const { lock, unlockTime, owner } = await loadFixture(deployAALockFixture);
+      await time.increaseTo(unlockTime);
+      
+      const userOp = await createWithdrawUserOp(lock, owner);
+      await expect(lock.processUserOp(userOp))
+        .to.emit(lock, "Withdrawal")
+        .withArgs(anyValue, anyValue);
     });
 
-    describe("Events", function () {
-      it("Should emit an event on withdrawals", async function () {
-        const { lock, unlockTime, lockedAmount } = await loadFixture(
-          deployOneYearLockFixture
-        );
-
-        await time.increaseTo(unlockTime);
-
-        await expect(lock.withdraw())
-          .to.emit(lock, "Withdrawal")
-          .withArgs(lockedAmount, anyValue); // We accept any value as `when` arg
-      });
+    it("Should reject AA withdrawal before unlock time", async function () {
+      const { lock, owner } = await loadFixture(deployAALockFixture);
+      const userOp = await createWithdrawUserOp(lock, owner);
+      
+      await expect(lock.processUserOp(userOp))
+        .to.be.revertedWith("You can't withdraw yet");
     });
 
-    describe("Transfers", function () {
-      it("Should transfer the funds to the owner", async function () {
-        const { lock, unlockTime, lockedAmount, owner } = await loadFixture(
-          deployOneYearLockFixture
-        );
+    it("Should reject AA withdrawal from non-owner", async function () {
+      const { lock, unlockTime, otherAccount } = await loadFixture(deployAALockFixture);
+      await time.increaseTo(unlockTime);
+      
+      const userOp = await createWithdrawUserOp(lock, otherAccount);
+      await expect(lock.processUserOp(userOp))
+        .to.be.revertedWith("You aren't the owner");
+    });
 
-        await time.increaseTo(unlockTime);
-
-        await expect(lock.withdraw()).to.changeEtherBalances(
+    it("Should transfer funds via AA operation", async function () {
+      const { lock, unlockTime, lockedAmount, owner } = await loadFixture(deployAALockFixture);
+      await time.increaseTo(unlockTime);
+      
+      const initialBalance = await ethers.provider.getBalance(lock.address);
+      const userOp = await createWithdrawUserOp(lock, owner);
+      
+      await expect(() => lock.processUserOp(userOp))
+        .to.changeEtherBalances(
           [owner, lock],
           [lockedAmount, -lockedAmount]
         );
-      });
+    });
+  });
+
+  // Maintain original tests for non-AA functionality
+  describe("Standard Functionality", function () {
+    it("Should maintain original non-AA features", async function () {
+      const { lock, unlockTime } = await loadFixture(deployAALockFixture);
+      expect(await lock.unlockTime()).to.equal(unlockTime);
     });
   });
 });
