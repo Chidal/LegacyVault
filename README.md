@@ -117,8 +117,9 @@ gantt
 2. Integrate NERO token-as-gas UI  
 3. Optimize for Blockspace 2.0  
 
-This version:  
-✅ Clearly shows NERO Chain integration points  
-✅ Provides measurable success metrics  
-✅ Includes visual documentation  
-✅ Aligns with Wave 2 judging criteria  
+This:  
+
+Clearly shows NERO Chain integration points  
+Provides measurable success metrics  
+Includes visual documentation  
+
