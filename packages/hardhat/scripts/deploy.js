@@ -1,33 +1,47 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// You can also run a script with `npx hardhat run <script>`. If you do that, Hardhat
-// will compile your contracts, add the Hardhat Runtime Environment's members to the
-// global scope, and execute the script.
 const hre = require("hardhat");
+const { deployAA } = require("@nerochain/hardhat-aa");
 
 async function main() {
-    const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-    const SIXTY_SECS = 60;
-    const unlockTime = currentTimestampInSeconds + SIXTY_SECS;
+  const currentTimestamp = Math.round(Date.now() / 1000);
+  const unlockTime = currentTimestamp + 60; // 60 seconds from now
+  
+  const lockedAmount = hre.ethers.utils.parseUnits("0.0001", 18); 
+  const feeToken = "0xNEROTokenAddress"; // Replace with NERO's token address
 
-    const lockedAmount = hre.ethers.utils.parseEther("0.0001");
+  console.log(`Deploying Lock with AA support...`);
 
-    const Lock = await hre.ethers.getContractFactory("Lock");
-    const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+  // AA-enabled deployment
+  const lock = await deployAA(
+    "Lock",
+    {
+      args: [unlockTime],
+      paymasterConfig: {
+        sponsorshipPolicy: "TIME_LOCK", // Custom policy from Paymaster dashboard
+        feeToken: feeToken
+      },
+      value: lockedAmount
+    }
+  );
 
-    console.log(`Unlock Time: ${unlockTime}`);
+  console.log(`
+    Lock deployed with AA features:
+    - Address: ${lock.address}
+    - Unlock Time: ${unlockTime}
+    - Fee Token: ${feeToken}
+    - Paymaster Policy: TIME_LOCK
+  `);
 
-    await lock.deployed();
-
-    console.log(
-        `Lock with 0.0001 ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`
-    );
+  // Optional: Verify on NERO Scan
+  if (hre.network.name !== "hardhat") {
+    console.log("Verifying contract...");
+    await hre.run("verify:verify", {
+      address: lock.address,
+      constructorArguments: [unlockTime],
+    });
+  }
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
 main().catch((error) => {
-    console.error(error);
-    process.exitCode = 1;
+  console.error(error);
+  process.exitCode = 1;
 });

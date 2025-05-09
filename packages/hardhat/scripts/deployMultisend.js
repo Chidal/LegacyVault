@@ -1,22 +1,37 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// You can also run a script with `npx hardhat run <script>`. If you do that, Hardhat
-// will compile your contracts, add the Hardhat Runtime Environment's members to the
-// global scope, and execute the script.
 const hre = require("hardhat");
+const { deployAA } = require("@nerochain/hardhat-aa");
 
 async function main() {
-  const mSend = await hre.ethers.getContractFactory("MultiSend");
-  const multisend = await mSend.deploy();
+  console.log("Deploying MultiSend with AA support...");
 
-  await multisend.deployed();
+  // AA-enabled deployment with gas sponsorship
+  const multisend = await deployAA(
+    "MultiSend",
+    {
+      paymasterConfig: {
+        sponsorshipPolicy: "BATCH_TRANSFER", 
+        gasLimit: "5000000" // Higher gas limit for batch ops
+      }
+    }
+  );
 
-  console.log(`MultiSend deployed`);
+  console.log(`
+    MultiSend deployed with AA features:
+    - Address: ${multisend.address}
+    - Paymaster Policy: BATCH_TRANSFER
+    - Gas Limit: 5,000,000
+  `);
+
+  // Optional: Verify on NERO Scan
+  if (hre.network.name !== "hardhat") {
+    console.log("Verifying contract...");
+    await hre.run("verify:verify", {
+      address: multisend.address,
+      constructorArguments: [],
+    });
+  }
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
 main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
