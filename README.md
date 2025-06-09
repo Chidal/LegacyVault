@@ -1,8 +1,6 @@
 # 💼 LegacyVault: Future-Proof Your Digital Wealth  
 **A Frictionless AA-Powered DeFi Manager on NERO Chain**  
 
-## 🎯 (NERO Wave 2)
-
 ### 🏆 Core Objectives
 1. **Leverage NERO's AA Stack**  
    - Implement Paymaster for 100% gasless transactions  
